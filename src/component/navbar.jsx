@@ -1,8 +1,18 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
-  const isAuthenticated = !!localStorage.getItem("auth_token"); 
+  const isAuthenticated = !!localStorage.getItem("auth_token");
+  const navigate = useNavigate();
+  const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
+
+  const handleLogout = () => {
+    localStorage.removeItem("auth_token");
+    localStorage.removeItem("user");
+    navigate("/");
+  };
+
+  const user = JSON.parse(localStorage.getItem("user")) || {};
 
   return (
     <nav className="text-white bg-blue-600">
@@ -19,9 +29,26 @@ const Navbar = () => {
               Music
             </Link>
             {isAuthenticated ? (
-              <Link to="/account" className="hover:text-blue-300">
-                Account
-              </Link>
+              <div className="relative">
+                <button
+                  onClick={() => setIsAccountMenuOpen(!isAccountMenuOpen)}
+                  className="hover:text-blue-300"
+                >
+                  Account
+                </button>
+                {isAccountMenuOpen && (
+                  <div className="absolute right-0 z-10 w-48 p-2 mt-2 bg-white rounded-md shadow-lg">
+                    <p className="text-gray-700">Name: {user.name}</p>
+                    <p className="text-gray-700">Email: {user.email}</p>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full px-4 py-2 mt-2 text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
             ) : (
               <>
                 <Link to="/login" className="hover:text-blue-300">
@@ -75,9 +102,16 @@ const Navbar = () => {
             Music
           </Link>
           {isAuthenticated ? (
-            <Link to="/account" className="block px-3 py-2 text-white rounded-md hover:bg-blue-700">
-              Account
-            </Link>
+            <div className="px-3 py-2 text-white rounded-md hover:bg-blue-700">
+              <p>Name: {user.name}</p>
+              <p>Email: {user.email}</p>
+              <button
+                onClick={handleLogout}
+                className="w-full px-4 py-2 mt-2 text-white bg-blue-600 rounded-md hover:bg-blue-700"
+              >
+                Logout
+              </button>
+            </div>
           ) : (
             <>
               <Link to="/login" className="block px-3 py-2 text-white rounded-md hover:bg-blue-700">
