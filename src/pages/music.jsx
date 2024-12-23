@@ -1,13 +1,17 @@
 import { useState } from 'react';
 import Navbar from "../component/navbar";
+import { api } from "../lib/auth";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function MusicPage() {
   const [songs, setSongs] = useState([]);
   const [formData, setFormData] = useState({
-    title: '',
-    artist: '',
-    genre: '',
-    duration: '',
+    name: '',
+    description: '',
+    url: '',
+    albumId: '',
+    imageUrl: '',
   });
 
   const handleInputChange = (e) => {
@@ -18,58 +22,58 @@ function MusicPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('/api/songs', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-      if (response.ok) {
-        const newSong = await response.json();
+      const response = await api.post('/songs', formData);
+      if (response.status === 201) {
+        const newSong = response.data.data;
         setSongs([...songs, newSong]);
-        setFormData({ title: '', artist: '', genre: '', duration: '' });
+        setFormData({ name: '', description: '', url: '', albumId: '', imageUrl: '' });
+        toast.success("Song added successfully!");
       }
     } catch (error) {
-      console.error('Error adding song:', error);
+      toast.error("Error adding song. Please try again.");
+      console.error('Error adding song:', error.response?.data || error.message);
     }
   };
 
   return (
-    <div className="p-6">
-      <h1 className="mb-4 text-3xl font-bold">Music Page</h1>
-      <form onSubmit={handleSubmit} className="mb-6">
-        <div className="grid grid-cols-2 gap-4">
-          {['title', 'artist', 'genre', 'duration'].map((field) => (
-            <input
-              key={field}
-              type="text"
-              name={field}
-              placeholder={`Enter ${field}`}
-              value={formData[field]}
-              onChange={handleInputChange}
-              className="p-2 border rounded"
-            />
-          ))}
+    <>
+      <Navbar />
+      <ToastContainer />
+      <div className="p-6">
+        <h1 className="mb-4 text-3xl font-bold">Music Page</h1>
+        <form onSubmit={handleSubmit} className="mb-6">
+          <div className="grid grid-cols-2 gap-4">
+            {['name', 'description', 'url', 'albumId', 'imageUrl'].map((field) => (
+              <input
+                key={field}
+                type="text"
+                name={field}
+                placeholder={`Enter ${field}`}
+                value={formData[field]}
+                onChange={handleInputChange}
+                className="p-2 border rounded"
+              />
+            ))}
+          </div>
+          <button
+            type="submit"
+            className="px-4 py-2 mt-4 text-white bg-blue-500 rounded"
+          >
+            Add Song
+          </button>
+        </form>
+        <div>
+          <h2 className="text-2xl font-semibold">Song List</h2>
+          <ul className="mt-4">
+            {songs.map((song, index) => (
+              <li key={index} className="p-2 border-b">
+                {song.name} - {song.description} ({song.url}, Album ID: {song.album_id}, Image URL: {song.image_url})
+              </li>
+            ))}
+          </ul>
         </div>
-        <button
-          type="submit"
-          className="px-4 py-2 mt-4 text-white bg-blue-500 rounded"
-        >
-          Add Song
-        </button>
-      </form>
-      <div>
-        <h2 className="text-2xl font-semibold">Song List</h2>
-        <ul className="mt-4">
-          {songs.map((song, index) => (
-            <li key={index} className="p-2 border-b">
-              {song.title} by {song.artist} ({song.genre}, {song.duration} mins)
-            </li>
-          ))}
-        </ul>
       </div>
-    </div>
+    </>
   );
 }
 
