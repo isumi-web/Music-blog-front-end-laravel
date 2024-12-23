@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import Navbar from "../component/navbar";
 import { api } from "../lib/auth";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom"; 
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -9,6 +12,8 @@ const RegisterPage = () => {
     password: "",
     user_type: "fan",
   });
+
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -20,15 +25,21 @@ const RegisterPage = () => {
 
     try {
       const response = await api.post("/register", formData);
+      toast.success("Registration successful!");
+      setTimeout(() => {
+        navigate("/login"); 
+      }, 2000);
       console.log("Registration successful:", response.data);
     } catch (error) {
-      console.error("Registration error:", error.response.data);
+      toast.error("Registration failed. Please try again.");
+      console.error("Registration error:", error.response?.data || error.message);
     }
   };
 
   return (
     <>
       <Navbar />
+      <ToastContainer />
       <div className="flex items-center justify-center min-h-screen bg-blue-50">
         <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
           <h2 className="mb-6 text-2xl font-bold text-center text-blue-800">
