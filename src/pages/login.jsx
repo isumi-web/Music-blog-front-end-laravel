@@ -23,10 +23,11 @@ const LoginPage = () => {
 
     try {
       const response = await api.post("/login", formData);
-      localStorage.setItem("auth_token", response.data.token); 
+      localStorage.setItem("auth_token", response.data.token);
+      localStorage.setItem("user", JSON.stringify(response.data.user)); 
       toast.success("Login successful!");
       setTimeout(() => {
-        navigate("/"); 
+        navigate("/");
       }, 2000);
       console.log("Login successful:", response.data);
     } catch (error) {
