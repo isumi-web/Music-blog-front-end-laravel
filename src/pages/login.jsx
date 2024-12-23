@@ -9,7 +9,6 @@ const LoginPage = () => {
         <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
           <h2 className="mb-6 text-2xl font-bold text-center text-blue-800">Login</h2>
           <form className="space-y-6">
-            {/* Email Input */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                 Email Address
@@ -23,8 +22,6 @@ const LoginPage = () => {
                 required
               />
             </div>
-
-            {/* Password Input */}
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                 Password
@@ -38,15 +35,11 @@ const LoginPage = () => {
                 required
               />
             </div>
-
-            {/* Forget Password Link */}
             <div className="text-right">
               <a href="#" className="text-sm text-blue-600 hover:underline">
                 Forgot Password?
               </a>
             </div>
-
-            {/* Login Button */}
             <div>
               <button
                 type="submit"
@@ -56,8 +49,6 @@ const LoginPage = () => {
               </button>
             </div>
           </form>
-
-          {/* Additional Links */}
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
               Don't have an account?{" "}

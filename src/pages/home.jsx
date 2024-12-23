@@ -7,7 +7,6 @@ const HomePage = () => {
     <>
       <Navbar />
       <div className="bg-white">
-        {/* Wallpaper Section */}
         <div className="relative w-full bg-blue-500 h-[80vh]">
           <img
             src="../wallpaper.jpg"
@@ -20,8 +19,6 @@ const HomePage = () => {
             </h1>
           </div>
         </div>
-
-        {/* Gallery Section */}
         <section className="px-4 py-8 md:px-12 bg-gradient-to-r from-blue-50 to-white">
           <h2 className="mb-6 text-3xl font-bold text-blue-800 underline decoration-2 decoration-blue-600">
             Gallery
@@ -68,8 +65,6 @@ const HomePage = () => {
             </div>
           </div>
         </section>
-
-        {/* Our Artists Section */}
         <section className="px-4 py-8 bg-white md:px-12">
           <h2 className="mb-6 text-3xl font-bold text-blue-800 underline decoration-2 decoration-blue-600">
             Our Artists
