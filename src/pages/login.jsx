@@ -1,14 +1,48 @@
-import React from "react";
+import React, { useState } from "react";
 import Navbar from "../component/navbar";
+import { api } from "../lib/auth";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const navigate = useNavigate();
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await api.post("/login", formData);
+      localStorage.setItem("auth_token", response.data.token); 
+      toast.success("Login successful!");
+      setTimeout(() => {
+        navigate("/"); 
+      }, 2000);
+      console.log("Login successful:", response.data);
+    } catch (error) {
+      toast.error("Login failed. Please try again.");
+      console.error("Login error:", error.response?.data || error.message);
+    }
+  };
+
   return (
     <>
       <Navbar />
+      <ToastContainer />
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-50 to-white">
         <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
           <h2 className="mb-6 text-2xl font-bold text-center text-blue-800">Login</h2>
-          <form className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                 Email Address
@@ -17,6 +51,8 @@ const LoginPage = () => {
                 type="email"
                 id="email"
                 name="email"
+                value={formData.email}
+                onChange={handleInputChange}
                 className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter your email"
                 required
@@ -30,6 +66,8 @@ const LoginPage = () => {
                 type="password"
                 id="password"
                 name="password"
+                value={formData.password}
+                onChange={handleInputChange}
                 className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter your password"
                 required
