@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Navbar from "../component/navbar";
+import { api } from "../lib/auth";
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -14,10 +15,15 @@ const RegisterPage = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log("Registration data:", formData);
+    try {
+      const response = await api.post("/register", formData);
+      console.log("Registration successful:", response.data);
+    } catch (error) {
+      console.error("Registration error:", error.response.data);
+    }
   };
 
   return (
