@@ -25,8 +25,11 @@ const Navbar = () => {
             <Link to="/" className="hover:text-blue-300">
               Home
             </Link>
-            <Link to="/music" className="hover:text-blue-300">
-              Music
+            <Link to="/albums" className="hover:text-blue-300">
+              Albums
+            </Link>
+            <Link to="/songs" className="hover:text-blue-300">
+              Songs
             </Link>
             {isAuthenticated ? (
               <div className="relative">
