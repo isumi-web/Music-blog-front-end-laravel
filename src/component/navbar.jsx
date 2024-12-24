@@ -19,7 +19,9 @@ const Navbar = () => {
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
-            <h1 className="text-2xl font-bold">Entertainment</h1>
+            {user.role !== "admin" && (
+              <h1 className="text-2xl font-bold">Entertainment</h1>
+            )}
           </div>
           <div className="hidden space-x-6 md:flex">
             <Link to="/" className="hover:text-blue-300">

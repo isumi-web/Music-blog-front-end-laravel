@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 const AdminSidebar = () => {
   return (
-    <div className="fixed top-16 left-0 w-64 h-full text-white bg-blue-600">
+    <div className="fixed top-0 left-0 w-64 h-full pt-16 text-white bg-blue-600">
       <div className="p-4">
         <h2 className="text-2xl font-bold">Admin Dashboard</h2>
       </div>
