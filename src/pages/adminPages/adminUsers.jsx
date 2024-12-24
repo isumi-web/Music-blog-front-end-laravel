@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import AdminSidebar from '../../component/adminSidebar';
 import Navbar from '../../component/navbar';
 import { api } from '../../lib/auth';
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const AdminUsers = () => {
   const [users, setUsers] = useState([]);
@@ -19,9 +21,21 @@ const AdminUsers = () => {
     fetchUsers();
   }, []);
 
+  const handleDelete = async (userId) => {
+    try {
+      await api.delete(`/user/${userId}`);
+      setUsers(users.filter(user => user.id !== userId));
+      toast.success("User deleted successfully!");
+    } catch (error) {
+      toast.error("Error deleting user. Please try again.");
+      console.error('Error deleting user:', error.response?.data || error.message);
+    }
+  };
+
   return (
     <>
       <Navbar />
+      <ToastContainer />
       <div className="flex">
         <AdminSidebar />
         <div className="flex-1 p-6 mt-16 ml-64">
@@ -46,8 +60,12 @@ const AdminUsers = () => {
                   <td className="px-4 py-2 border">{user.role}</td>
                   <td className="px-4 py-2 border">{user.user_type}</td>
                   <td className="px-4 py-2 border">
-                    <button className="px-2 py-1 mr-2 text-white bg-yellow-500 rounded">Edit</button>
-                    <button className="px-2 py-1 text-white bg-red-500 rounded">Delete</button>
+                    <button
+                      onClick={() => handleDelete(user.id)}
+                      className="px-2 py-1 text-white bg-red-500 rounded"
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))}
