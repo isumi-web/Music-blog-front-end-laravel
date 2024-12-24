@@ -6,6 +6,7 @@ import MusicPage from './pages/songs';
 import AlbumsPage from './pages/albums';
 import AdminHome from './pages/adminPages/adminHome';
 import AdminUsers from './pages/adminPages/adminUsers';
+import AdminAlbums from './pages/adminPages/adminAlbums';
 
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
           <Route path='/albums' element={<AlbumsPage />} />
           <Route path='/dashboard' element={<AdminHome />} />
           <Route path='/admin/users' element={<AdminUsers />} />
+          <Route path='/admin/albums' element={<AdminAlbums />} />
 
 
         </Routes>
