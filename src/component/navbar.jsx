@@ -31,6 +31,11 @@ const Navbar = () => {
             <Link to="/songs" className="hover:text-blue-300">
               Songs
             </Link>
+            {isAuthenticated && user.role === "admin" && (
+              <Link to="/dashboard" className="hover:text-blue-300">
+                Dashboard
+              </Link>
+            )}
             {isAuthenticated ? (
               <div className="relative">
                 <button
@@ -101,9 +106,17 @@ const Navbar = () => {
           <Link to="/" className="block px-3 py-2 text-white rounded-md hover:bg-blue-700">
             Home
           </Link>
-          <Link to="/music" className="block px-3 py-2 text-white rounded-md hover:bg-blue-700">
-            Music
+          <Link to="/albums" className="block px-3 py-2 text-white rounded-md hover:bg-blue-700">
+            Albums
           </Link>
+          <Link to="/songs" className="block px-3 py-2 text-white rounded-md hover:bg-blue-700">
+            Songs
+          </Link>
+          {isAuthenticated && user.role === "admin" && (
+            <Link to="/dashboard" className="block px-3 py-2 text-white rounded-md hover:bg-blue-700">
+              Dashboard
+            </Link>
+          )}
           {isAuthenticated ? (
             <div className="px-3 py-2 text-white rounded-md hover:bg-blue-700">
               <p>Name: {user.name}</p>
