@@ -7,17 +7,20 @@ import "react-toastify/dist/ReactToastify.css";
 
 const AdminUsers = () => {
   const [users, setUsers] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const fetchUsers = async (page = 1) => {
+    try {
+      const response = await api.get(`/user?page=${page}`);
+      setUsers(response.data.users);
+      setTotalPages(response.data.meta.last_page);
+    } catch (error) {
+      console.error('Error fetching users:', error.response?.data || error.message);
+    }
+  };
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await api.get('/user');
-        console.log(response.data);
-        setUsers(response.data.users);
-      } catch (error) {
-        console.error('Error fetching users:', error.response?.data || error.message);
-      }
-    };
     fetchUsers();
   }, []);
 
@@ -29,6 +32,22 @@ const AdminUsers = () => {
     } catch (error) {
       toast.error("Error deleting user. Please try again.");
       console.error('Error deleting user:', error.response?.data || error.message);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      const nextPage = currentPage + 1;
+      setCurrentPage(nextPage);
+      fetchUsers(nextPage);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      const previousPage = currentPage - 1;
+      setCurrentPage(previousPage);
+      fetchUsers(previousPage);
     }
   };
 
@@ -47,7 +66,7 @@ const AdminUsers = () => {
                 <th className="px-4 py-2 border">Name</th>
                 <th className="px-4 py-2 border">Email</th>
                 <th className="px-4 py-2 border">Role</th>
-                <th className="px-4 py-2 border">Type</th>
+                <th className="px-4 py-2 border">Image</th>
                 <th className="px-4 py-2 border">Action</th>
               </tr>
             </thead>
@@ -58,7 +77,13 @@ const AdminUsers = () => {
                   <td className="px-4 py-2 border">{user.name}</td>
                   <td className="px-4 py-2 border">{user.email}</td>
                   <td className="px-4 py-2 border">{user.role}</td>
-                  <td className="px-4 py-2 border">{user.user_type}</td>
+                  <td className="px-4 py-2 border">
+                    <img
+                      src={user.image}
+                      alt={user.name}
+                      className="object-cover w-16 h-16 rounded"
+                    />
+                  </td>
                   <td className="px-4 py-2 border">
                     <button
                       onClick={() => handleDelete(user.id)}
@@ -71,6 +96,22 @@ const AdminUsers = () => {
               ))}
             </tbody>
           </table>
+          <div className="flex justify-between mt-4">
+            <button
+              onClick={handlePreviousPage}
+              disabled={currentPage === 1}
+              className="px-4 py-2 text-white bg-blue-500 rounded"
+            >
+              Previous
+            </button>
+            <button
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+              className="px-4 py-2 text-white bg-blue-500 rounded"
+            >
+              Next
+            </button>
+          </div>
         </div>
       </div>
     </>
