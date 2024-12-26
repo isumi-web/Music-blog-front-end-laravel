@@ -5,17 +5,25 @@ import { api } from "../lib/auth";
 
 const HomePage = () => {
   const [albums, setAlbums] = useState([]);
+  const [artists, setArtists] = useState([]);
 
   useEffect(() => {
-    const fetchAlbums = async () => {
+    const fetchData = async () => {
       try {
-        const response = await api.get('/albums');
-        setAlbums(response.data.data);
+        const [albumsResponse, artistsResponse] = await Promise.all([
+          api.get('/albums'),
+          api.get('/public/artists')
+        ]);
+
+        setAlbums(albumsResponse.data.data || []);
+        setArtists(artistsResponse.data.users || []);
       } catch (error) {
-        console.error('Error fetching albums:', error.response?.data || error.message);
+        console.error('Error fetching data:', error);
+        setAlbums([]);
+        setArtists([]);
       }
     };
-    fetchAlbums();
+    fetchData();
   }, []);
 
   return (
@@ -42,7 +50,7 @@ const HomePage = () => {
             {albums.map((album) => (
               <div key={album.id} className="p-4 transition-transform transform bg-white rounded-lg shadow-lg hover:scale-105">
                 <img
-                  src={album.image_url}
+                  src={album.image}
                   alt={album.name}
                   className="object-cover w-full h-48 rounded-md"
                 />
@@ -61,36 +69,28 @@ const HomePage = () => {
             Our Artists
           </h2>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            <div className="flex flex-col items-center p-6 transition-transform transform rounded-lg shadow-lg bg-blue-50 hover:scale-105">
-              <img
-                src="artist1.jpg"
-                alt="Artist 1"
-                className="object-cover w-32 h-32 rounded-full"
-              />
-              <h3 className="mt-4 text-xl font-semibold text-blue-700">
-                Artist 1
-              </h3>
-            </div>
-            <div className="flex flex-col items-center p-6 transition-transform transform rounded-lg shadow-lg bg-blue-50 hover:scale-105">
-              <img
-                src="artist2.jpg"
-                alt="Artist 2"
-                className="object-cover w-32 h-32 rounded-full"
-              />
-              <h3 className="mt-4 text-xl font-semibold text-blue-700">
-                Artist 2
-              </h3>
-            </div>
-            <div className="flex flex-col items-center p-6 transition-transform transform rounded-lg shadow-lg bg-blue-50 hover:scale-105">
-              <img
-                src="artist3.jpg"
-                alt="Artist 3"
-                className="object-cover w-32 h-32 rounded-full"
-              />
-              <h3 className="mt-4 text-xl font-semibold text-blue-700">
-                Artist 3
-              </h3>
-            </div>
+            {artists.length > 0 ? (
+              artists.map((artist) => (
+                <div key={artist.id} className="flex flex-col items-center p-6 transition-transform transform rounded-lg shadow-lg bg-blue-50 hover:scale-105">
+                  <div className="w-32 h-32 overflow-hidden rounded-full">
+                    <img
+                      src={artist.image} 
+                      alt={artist.name}
+                      className="object-cover w-full h-full"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                      }}
+                    />
+                  </div>
+                  <h3 className="mt-4 text-xl font-semibold text-blue-700">
+                    {artist.name}
+                  </h3>
+                  <p className="mt-2 text-gray-600">{artist.email}</p>
+                </div>
+              ))
+            ) : (
+              <p className="col-span-3 text-center text-gray-500">No artists found</p>
+            )}
           </div>
         </section>
       </div>
@@ -100,3 +100,4 @@ const HomePage = () => {
 };
 
 export default HomePage;
+
