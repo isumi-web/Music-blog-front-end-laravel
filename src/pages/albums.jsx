@@ -1,30 +1,32 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import Navbar from "../component/navbar";
 import { api } from "../lib/auth";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Footer from '../component/footer';
+import Footer from "../component/footer";
 
 function AlbumsPage() {
   const [albums, setAlbums] = useState([]);
-  const [formData, setFormData] = useState({
-    name: '',
-    artist: '',
-    imageUrl: '',
-  });
   const [showForm, setShowForm] = useState(false);
-  const user_type = 'fan'; 
-  const user_id = 1; 
+  const [formData, setFormData] = useState({ name: "", artist: "", image: "" });
+  const [user, setUser] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const fetchAlbums = async (page = 1) => {
+    try {
+      const response = await api.get(`/albums?page=${page}`);
+      setAlbums(response.data.data);
+      setTotalPages(response.data.meta.last_page);
+    } catch (error) {
+      toast.error("Error loading albums");
+    }
+  };
 
   useEffect(() => {
-    const fetchAlbums = async () => {
-      try {
-        const response = await api.get('/albums');
-        setAlbums(response.data.data);
-      } catch (error) {
-        console.error('Error fetching albums:', error.response?.data || error.message);
-      }
-    };
+    const userFromStorage = localStorage.getItem("user");
+    if (userFromStorage) setUser(JSON.parse(userFromStorage));
     fetchAlbums();
   }, []);
 
@@ -35,114 +37,105 @@ function AlbumsPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
-      const response = await api.post('/albums', formData);
-      if (response.status === 201) {
-        const newAlbum = response.data.album;
-        setAlbums([...albums, newAlbum]);
-        setFormData({ name: '', artist: '', imageUrl: '' });
-        toast.success("Album added successfully!");
-        setShowForm(false);
-      }
-    } catch (error) {
-      toast.error("Error adding album. Please try again.");
-      console.error('Error adding album:', error.response?.data || error.message);
+      await api.post("/albums", formData);
+      toast.success("Album created successfully!");
+      setFormData({ name: "", artist: "", image: "" });
+      setShowForm(false);
+      fetchAlbums(currentPage);
+    } catch {
+      toast.error("Failed to create album");
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleDelete = async (albumId) => {
-    try {
-      await api.delete(`/albums/${albumId}`);
-      setAlbums(albums.filter(album => album.id !== albumId));
-      toast.success("Album deleted successfully!");
-    } catch (error) {
-      toast.error("Error deleting album. Please try again.");
-      console.error('Error deleting album:', error.response?.data || error.message);
-    }
-  };
-
-  const handleEdit = (album) => {
-    setFormData({
-      name: album.name,
-      artist: album.artist,
-      imageUrl: album.image_url,
-    });
-    setShowForm(true);
+  const changePage = (direction) => {
+    const newPage = currentPage + direction;
+    setCurrentPage(newPage);
+    fetchAlbums(newPage);
   };
 
   return (
     <>
       <Navbar />
-      <ToastContainer />
+      <ToastContainer position="top-right" autoClose={3000} />
       <div className="p-6">
-        <h1 className="mb-4 text-3xl font-bold">Albums Page</h1>
-        {user_type !== 'fan' && (
-          <>
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-3xl font-bold">Albums Page</h1>
+          {user && (
             <button
-              onClick={() => setShowForm(!showForm)}
-              className="px-4 py-2 mb-4 text-white bg-blue-500 rounded"
+              onClick={() => {
+                setShowForm(!showForm);
+                setFormData({ name: "", artist: "", image: "" });
+              }}
+              className="px-4 py-2 text-white bg-blue-500 rounded"
             >
-              {showForm ? 'Cancel' : 'Add Album'}
+              {showForm ? "Cancel" : "Add Album"}
             </button>
-            {showForm && (
-              <form onSubmit={handleSubmit} className="mb-6">
-                <div className="grid grid-cols-2 gap-4">
-                  {['name', 'artist', 'imageUrl'].map((field) => (
-                    <input
-                      key={field}
-                      type="text"
-                      name={field}
-                      placeholder={`Enter ${field}`}
-                      value={formData[field]}
-                      onChange={handleInputChange}
-                      className="p-2 border rounded"
-                    />
-                  ))}
-                </div>
-                <button
-                  type="submit"
-                  className="px-4 py-2 mt-4 text-white bg-green-500 rounded"
-                >
-                  Save Album
-                </button>
-              </form>
-            )}
-          </>
-        )}
-        <div>
-          <h2 className="text-2xl font-semibold">Album List</h2>
-          <ul className="mt-4">
-            {albums.map((album, index) => (
-              <li key={index} className="p-4 mb-4 border rounded">
-                <div className="flex items-center">
-                  <img src={album.image_url} alt={album.name} className="w-16 h-16 mr-4 rounded" />
-                  <div>
-                    <h3 className="text-xl font-bold">{album.name}</h3>
-                    <p className="text-gray-600">{album.artist}</p>
-                    {user_type === 'artist' && album.user_id === user_id && (
-                      <div className="mt-2">
-                        <button
-                          onClick={() => handleEdit(album)}
-                          className="px-2 py-1 mr-2 text-white bg-yellow-500 rounded"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDelete(album.id)}
-                          className="px-2 py-1 text-white bg-red-500 rounded"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </li>
+          )}
+        </div>
+        {showForm && (
+          <form onSubmit={handleSubmit} className="mb-4">
+            {["name", "artist", "image"].map((field) => (
+              <div className="mb-2" key={field}>
+                <label className="block mb-1 text-sm font-semibold" htmlFor={field}>
+                  {field.charAt(0).toUpperCase() + field.slice(1)}
+                </label>
+                <input
+                  type="text"
+                  id={field}
+                  name={field}
+                  value={formData[field]}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border rounded"
+                  required
+                />
+              </div>
             ))}
-          </ul>
+            <button
+              type="submit"
+              className="px-4 py-2 text-white bg-green-500 rounded"
+              disabled={isLoading}
+            >
+              {isLoading ? "Creating..." : "Create Album"}
+            </button>
+          </form>
+        )}
+        <h2 className="text-2xl font-semibold">Album List</h2>
+        <ul className="mt-4">
+          {albums.map((album) => (
+            <li key={album.id} className="p-4 mb-4 border rounded">
+              <div className="flex items-center">
+                <img src={album.image} alt={album.name} className="w-16 h-16 mr-4 rounded" />
+                <div>
+                  <h3 className="text-xl font-bold">{album.name}</h3>
+                  <p className="text-gray-600">{album.artist}</p>
+                  <p className="text-sm text-gray-500">Album ID: {album.id}</p>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+        <div className="flex justify-between mt-4">
+          <button
+            onClick={() => changePage(-1)}
+            disabled={currentPage === 1}
+            className="px-4 py-2 text-white bg-blue-500 rounded"
+          >
+            Previous
+          </button>
+          <button
+            onClick={() => changePage(1)}
+            disabled={currentPage === totalPages}
+            className="px-4 py-2 text-white bg-blue-500 rounded"
+          >
+            Next
+          </button>
         </div>
       </div>
-      <Footer/>
+      <Footer />
     </>
   );
 }
