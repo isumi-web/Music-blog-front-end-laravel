@@ -7,6 +7,7 @@ import AlbumsPage from './pages/albums';
 import AdminHome from './pages/adminPages/adminHome';
 import AdminUsers from './pages/adminPages/adminUsers';
 import AdminAlbums from './pages/adminPages/adminAlbums';
+import AdminSongs from './pages/adminPages/adminSongs';
 
 
 function App() {
@@ -23,7 +24,7 @@ function App() {
           <Route path='/dashboard' element={<AdminHome />} />
           <Route path='/admin/users' element={<AdminUsers />} />
           <Route path='/admin/albums' element={<AdminAlbums />} />
-
+          <Route path='/admin/songs' element={<AdminSongs />} />
 
         </Routes>
       </Router>
