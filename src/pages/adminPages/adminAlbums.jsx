@@ -1,3 +1,10 @@
+import React, { useState, useEffect } from "react";
+import AdminSidebar from "../../component/adminSidebar";
+import Navbar from "../../component/navbar";
+import { api } from "../../lib/auth";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 const AdminAlbums = () => {
   const [albums, setAlbums] = useState([]);
   const [showForm, setShowForm] = useState(false);
@@ -16,7 +23,9 @@ const AdminAlbums = () => {
   }, [currentPage]);
 
   const fetchAlbums = async (page) => {
-    if (page < 1 || page > totalPages) return; // Prevent invalid page requests
+    if (page < 1 || page > totalPages) {
+      return; // Prevent invalid page requests
+    }
     setLoading(true);
     try {
       const response = await api.get(`/albums?page=${page}`);
@@ -86,11 +95,15 @@ const AdminAlbums = () => {
   };
 
   const handleNextPage = () => {
-    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
+    if (currentPage < totalPages) {
+      setCurrentPage((prev) => prev + 1);
+    }
   };
 
   const handlePreviousPage = () => {
-    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
+    if (currentPage > 1) {
+      setCurrentPage((prev) => prev - 1);
+    }
   };
 
   return (
@@ -210,3 +223,5 @@ const AdminAlbums = () => {
     </>
   );
 };
+
+export default AdminAlbums;

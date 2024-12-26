@@ -26,7 +26,9 @@ function AlbumsPage() {
 
   useEffect(() => {
     const userFromStorage = localStorage.getItem("user");
-    if (userFromStorage) setUser(JSON.parse(userFromStorage));
+    if (userFromStorage) {
+      setUser(JSON.parse(userFromStorage));
+    }
     fetchAlbums();
   }, []);
 
