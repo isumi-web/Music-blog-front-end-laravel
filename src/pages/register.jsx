@@ -10,7 +10,7 @@ const RegisterPage = () => {
     name: "",
     email: "",
     password: "",
-    user_type: "fan",
+    image: "", 
   });
 
   const navigate = useNavigate();
@@ -101,33 +101,22 @@ const RegisterPage = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                User Type
+              <label
+                htmlFor="image"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Image URL
               </label>
-              <div className="flex items-center">
-                <input
-                  type="radio"
-                  id="artist"
-                  name="user_type"
-                  value="artist"
-                  checked={formData.user_type === "artist"}
-                  onChange={handleInputChange}
-                  className="mr-2"
-                />
-                <label htmlFor="artist" className="mr-4">
-                  Artist
-                </label>
-                <input
-                  type="radio"
-                  id="fan"
-                  name="user_type"
-                  value="fan"
-                  checked={formData.user_type === "fan"}
-                  onChange={handleInputChange}
-                  className="mr-2"
-                />
-                <label htmlFor="fan">Fan</label>
-              </div>
+              <input
+                type="text"
+                id="image"
+                name="image"
+                value={formData.image}
+                onChange={handleInputChange}
+                placeholder="Enter your image URL"
+                className="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
             </div>
             <div>
               <button
