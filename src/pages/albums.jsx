@@ -72,7 +72,7 @@ function AlbumsPage() {
                 setShowForm(!showForm);
                 setFormData({ name: "", artist: "", image: "" });
               }}
-              className="px-4 py-2 text-white bg-blue-500 rounded"
+              className="px-4 py-2 text-white bg-blue-900 rounded"
             >
               {showForm ? "Cancel" : "Add Album"}
             </button>
@@ -124,14 +124,14 @@ function AlbumsPage() {
           <button
             onClick={() => changePage(-1)}
             disabled={currentPage === 1}
-            className="px-4 py-2 text-white bg-blue-500 rounded"
+            className="px-4 py-2 text-white bg-blue-900 rounded"
           >
             Previous
           </button>
           <button
             onClick={() => changePage(1)}
             disabled={currentPage === totalPages}
-            className="px-4 py-2 text-white bg-blue-500 rounded"
+            className="px-4 py-2 text-white bg-blue-900 rounded"
           >
             Next
           </button>

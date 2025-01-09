@@ -23,7 +23,9 @@ const LoginPage = () => {
 
     try {
       const response = await api.post("/login", formData);
+      console.log("Login response:", response.data);
       localStorage.setItem("auth_token", response.data.access_token);
+      localStorage.setItem("user_role", response.data.user.role);
       localStorage.setItem("user", JSON.stringify(response.data.user)); 
       toast.success("Login successful!");
       setTimeout(() => {
@@ -54,7 +56,7 @@ const LoginPage = () => {
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
-                className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900"
                 placeholder="Enter your email"
                 required
               />
@@ -69,20 +71,20 @@ const LoginPage = () => {
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
-                className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900"
                 placeholder="Enter your password"
                 required
               />
             </div>
             <div className="text-right">
-              <a href="#" className="text-sm text-blue-600 hover:underline">
+              <a href="#" className="text-sm text-blue-900 hover:underline">
                 Forgot Password?
               </a>
             </div>
             <div>
               <button
                 type="submit"
-                className="w-full px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 text-white bg-blue-900 rounded-md hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-900"
               >
                 Login
               </button>
@@ -91,7 +93,7 @@ const LoginPage = () => {
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
               Don't have an account?{" "}
-              <a href="/register" className="text-blue-600 hover:underline">
+              <a href="/register" className="text-blue-900 hover:underline">
                 Register here
               </a>
             </p>

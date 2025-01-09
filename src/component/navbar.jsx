@@ -15,7 +15,7 @@ const Navbar = () => {
   const user = JSON.parse(localStorage.getItem("user")) || {};
 
   return (
-    <nav className="text-white bg-blue-600">
+    <nav className="text-white bg-blue-900">
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
@@ -24,17 +24,17 @@ const Navbar = () => {
             )}
           </div>
           <div className="hidden space-x-6 md:flex">
-            <Link to="/" className="hover:text-blue-300">
+            <Link to="/" className="hover:text-blue-700">
               Home
             </Link>
-            <Link to="/albums" className="hover:text-blue-300">
+            <Link to="/albums" className="hover:text-blue-700">
               Albums
             </Link>
-            <Link to="/songs" className="hover:text-blue-300">
+            <Link to="/songs" className="hover:text-blue-700">
               Songs
             </Link>
             {isAuthenticated && user.role === "admin" && (
-              <Link to="/dashboard" className="hover:text-blue-300">
+              <Link to="/dashboard" className="hover:text-blue-700">
                 Dashboard
               </Link>
             )}
@@ -42,7 +42,7 @@ const Navbar = () => {
               <div className="relative">
                 <button
                   onClick={() => setIsAccountMenuOpen(!isAccountMenuOpen)}
-                  className="hover:text-blue-300"
+                  className="hover:text-blue-700"
                 >
                   Account
                 </button>
@@ -61,10 +61,10 @@ const Navbar = () => {
               </div>
             ) : (
               <>
-                <Link to="/login" className="hover:text-blue-300">
+                <Link to="/login" className="hover:text-blue-700">
                   Login
                 </Link>
-                <Link to="/register" className="hover:text-blue-300">
+                <Link to="/register" className="hover:text-blue-700">
                   Register
                 </Link>
               </>
@@ -76,7 +76,7 @@ const Navbar = () => {
               placeholder="Search..."
               className="px-3 py-1 text-black rounded-md"
             />
-            <button className="px-4 py-1 ml-2 bg-blue-700 rounded-md hover:bg-blue-800">
+            <button className="px-4 py-1 ml-2 bg-blue-900 rounded-md hover:bg-blue-800">
               Search
             </button>
           </div>

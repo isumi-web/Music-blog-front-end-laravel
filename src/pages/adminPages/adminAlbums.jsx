@@ -29,7 +29,8 @@ const AdminAlbums = () => {
     setLoading(true);
     try {
       const response = await api.get(`/albums?page=${page}`);
-      setAlbums(response.data.data || []);
+      const albumsData = response.data.data || [];
+      setAlbums(albumsData);
       setTotalPages(response.data.meta.last_page || 1);
     } catch (error) {
       toast.error("Error fetching albums");
@@ -57,21 +58,29 @@ const AdminAlbums = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    toast.info(editAlbumId ? "Updating album..." : "Creating album...");
     try {
       if (editAlbumId) {
         const response = await api.put(`/albums/${editAlbumId}`, formData);
-        setAlbums((prevAlbums) =>
-          prevAlbums.map((album) =>
-            album.id === editAlbumId ? response.data.data : album
-          )
-        );
-        toast.success("Album updated successfully!");
+        const updatedAlbum = response.data.data;
+        if (updatedAlbum) {
+          setAlbums((prevAlbums) =>
+            prevAlbums.map((album) =>
+              album.id === editAlbumId ? updatedAlbum : album
+            )
+          );
+          toast.success("Album updated successfully!");
+        }
       } else {
         const response = await api.post("/albums", formData);
-        setAlbums((prevAlbums) => [response.data.data, ...prevAlbums]);
-        toast.success("Album created successfully!");
+        const newAlbum = response.data.data;
+        if (newAlbum) {
+          setAlbums((prevAlbums) => [newAlbum, ...prevAlbums]);
+          toast.success("Album created successfully!");
+        }
       }
       resetForm();
+      fetchAlbums(currentPage); // Refresh the album list
     } catch (error) {
       toast.error(editAlbumId ? "Error updating album" : "Error creating album");
       console.error("Error saving album:", error);
@@ -116,10 +125,10 @@ const AdminAlbums = () => {
           <h1 className="text-3xl font-bold">Admin Albums</h1>
           <button
             onClick={() => {
-              setShowForm(!showForm);
               resetForm();
+              setShowForm(!showForm);
             }}
-            className="px-4 py-2 mb-4 text-white bg-blue-500 rounded"
+            className="px-4 py-2 mb-4 text-white bg-blue-900 rounded"
           >
             {showForm ? "Cancel" : "Add Album"}
           </button>
@@ -206,14 +215,14 @@ const AdminAlbums = () => {
             <button
               onClick={handlePreviousPage}
               disabled={currentPage === 1}
-              className="px-4 py-2 text-white bg-blue-500 rounded"
+              className="px-4 py-2 text-white bg-blue-900 rounded"
             >
               Previous
             </button>
             <button
               onClick={handleNextPage}
               disabled={currentPage === totalPages}
-              className="px-4 py-2 text-white bg-blue-500 rounded"
+              className="px-4 py-2 text-white bg-blue-900 rounded"
             >
               Next
             </button>

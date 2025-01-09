@@ -7,12 +7,13 @@ import Footer from "../component/footer";
 
 function MusicPage() {
   const [songs, setSongs] = useState([]);
+  const [albums, setAlbums] = useState([]); // State to store albums
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     url: "",
-    albumId: "",
+    albumName: "",
     image: "",
   });
   const [user, setUser] = useState(null);
@@ -30,17 +31,35 @@ function MusicPage() {
     }
   };
 
+  const fetchAlbums = async () => {
+    try {
+      const response = await api.get("/albums"); // Replace with your API endpoint for albums
+      console.log("Albums API response:", response.data);
+      setAlbums(Array.isArray(response.data.data) ? response.data.data : []); // Ensure albums is an array
+    } catch (error) {
+      toast.error("Error loading albums");
+      console.error("Error fetching albums:", error.response?.data || error.message);
+    }
+  };
+
   useEffect(() => {
     const userFromStorage = localStorage.getItem("user");
     if (userFromStorage) {
       setUser(JSON.parse(userFromStorage));
     }
     fetchSongs();
+    fetchAlbums(); // Fetch albums when component mounts
   }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+  };
+
+  const handleAddSongClick = () => {
+    console.log("Albums state when 'Add Songs' clicked:", albums);
+    setShowForm(!showForm);
+    setFormData({ name: "", description: "", url: "", albumName: "", image: "" });
   };
 
   const handleSubmit = async (e) => {
@@ -50,7 +69,7 @@ function MusicPage() {
       const response = await api.post("/songs", formData);
       if (response.status === 201) {
         toast.success("Song created successfully!");
-        setFormData({ name: "", description: "", url: "", albumId: "", image: "" });
+        setFormData({ name: "", description: "", url: "", albumName: "", image: "" });
         setShowForm(false);
         fetchSongs(currentPage);
       } else {
@@ -79,11 +98,8 @@ function MusicPage() {
           <h1 className="text-3xl font-bold">Music Page</h1>
           {user && (
             <button
-              onClick={() => {
-                setShowForm(!showForm);
-                setFormData({ name: "", description: "", url: "", albumId: "", image: "" });
-              }}
-              className="px-4 py-2 text-white bg-blue-500 rounded"
+              onClick={handleAddSongClick}
+              className="px-4 py-2 text-white bg-blue-900 rounded"
             >
               {showForm ? "Cancel" : "Add Song"}
             </button>
@@ -91,22 +107,83 @@ function MusicPage() {
         </div>
         {showForm && (
           <form onSubmit={handleSubmit} className="mb-4">
-            {["name", "description", "url", "albumId", "image"].map((field) => (
-              <div className="mb-2" key={field}>
-                <label className="block mb-1 text-sm font-semibold" htmlFor={field}>
-                  {field.charAt(0).toUpperCase() + field.slice(1)}
-                </label>
-                <input
-                  type="text"
-                  id={field}
-                  name={field}
-                  value={formData[field]}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border rounded"
-                  required
-                />
-              </div>
-            ))}
+            <div className="mb-2">
+              <label className="block mb-1 text-sm font-semibold" htmlFor="name">
+                Name
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border rounded"
+                required
+              />
+            </div>
+            <div className="mb-2">
+              <label className="block mb-1 text-sm font-semibold" htmlFor="description">
+                Description
+              </label>
+              <input
+                type="text"
+                id="description"
+                name="description"
+                value={formData.description}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border rounded"
+                required
+              />
+            </div>
+            <div className="mb-2">
+              <label className="block mb-1 text-sm font-semibold" htmlFor="url">
+                URL
+              </label>
+              <input
+                type="text"
+                id="url"
+                name="url"
+                value={formData.url}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border rounded"
+                required
+              />
+            </div>
+            <div className="mb-2">
+              <label className="block mb-1 text-sm font-semibold" htmlFor="albumName">
+                Album
+              </label>
+              <select
+                id="albumName"
+                name="albumName"
+                value={formData.albumName}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border rounded"
+                required
+              >
+                <option value="" disabled>
+                  Select an album
+                </option>
+                {(Array.isArray(albums) ? albums : []).map((album) => (
+                  <option key={album.id} value={album.name}>
+                    {album.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="mb-2">
+              <label className="block mb-1 text-sm font-semibold" htmlFor="image">
+                Image URL
+              </label>
+              <input
+                type="text"
+                id="image"
+                name="image"
+                value={formData.image}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border rounded"
+              />
+            </div>
             <button
               type="submit"
               className="px-4 py-2 text-white bg-green-500 rounded"
@@ -130,7 +207,7 @@ function MusicPage() {
                       Listen
                     </a>
                   </p>
-                  <p className="text-gray-600">Album: {song.album ? song.album.name : 'Unknown Album'}</p>
+                  <p className="text-gray-600">Album: {song.albumName || "Unknown Album"}</p>
                 </div>
               </div>
             </li>
@@ -140,14 +217,14 @@ function MusicPage() {
           <button
             onClick={() => changePage(-1)}
             disabled={currentPage === 1}
-            className="px-4 py-2 text-white bg-blue-500 rounded"
+            className="px-4 py-2 text-white bg-blue-900 rounded"
           >
             Previous
           </button>
           <button
             onClick={() => changePage(1)}
             disabled={currentPage === totalPages}
-            className="px-4 py-2 text-white bg-blue-500 rounded"
+            className="px-4 py-2 text-white bg-blue-900 rounded"
           >
             Next
           </button>

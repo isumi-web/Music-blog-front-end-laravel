@@ -60,7 +60,7 @@ const RegisterPage = () => {
                 value={formData.name}
                 onChange={handleInputChange}
                 placeholder="Enter your name"
-                className="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900"
                 required
               />
             </div>
@@ -78,7 +78,7 @@ const RegisterPage = () => {
                 value={formData.email}
                 onChange={handleInputChange}
                 placeholder="Enter your email"
-                className="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900"
                 required
               />
             </div>
@@ -96,7 +96,7 @@ const RegisterPage = () => {
                 value={formData.password}
                 onChange={handleInputChange}
                 placeholder="Enter your password"
-                className="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900"
                 required
               />
             </div>
@@ -114,14 +114,14 @@ const RegisterPage = () => {
                 value={formData.image}
                 onChange={handleInputChange}
                 placeholder="Enter your image URL"
-                className="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900"
                 required
               />
             </div>
             <div>
               <button
                 type="submit"
-                className="w-full px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 text-white bg-blue-900 rounded-md hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-900"
               >
                 Register
               </button>
@@ -129,7 +129,7 @@ const RegisterPage = () => {
           </form>
           <p className="mt-4 text-sm text-center text-gray-600">
             Already have an account?{" "}
-            <a href="/login" className="text-blue-500 hover:underline">
+            <a href="/login" className="text-blue-900 hover:underline">
               Log in
             </a>
           </p>

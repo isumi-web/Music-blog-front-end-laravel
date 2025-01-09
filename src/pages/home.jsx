@@ -30,20 +30,20 @@ const HomePage = () => {
     <>
       <Navbar />
       <div className="bg-white">
-        <div className="relative w-full bg-blue-500 h-[80vh]">
+        <div className="relative w-full bg-blue-900 h-[80vh]">
           <img
             src="../wallpaper.jpg"
             alt="Wallpaper"
             className="object-cover w-full h-full"
           />
-          <div className="absolute inset-0 flex items-center justify-center bg-blue-900 bg-opacity-50">
-            <h1 className="text-4xl font-bold text-white md:text-5xl drop-shadow-lg">
+          <div className="absolute top-0 left-0 flex items-start justify-center w-full h-full bg-blue-900 bg-opacity-50">
+            <h1 className="mt-8 text-4xl font-bold text-white md:text-5xl drop-shadow-lg">
               Welcome to Entertainment World
             </h1>
           </div>
         </div>
         <section className="px-4 py-8 md:px-12 bg-gradient-to-r from-blue-50 to-white">
-          <h2 className="mb-6 text-3xl font-bold text-blue-800 underline decoration-2 decoration-blue-600">
+          <h2 className="mb-6 text-3xl font-bold text-black">
             Albums
           </h2>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
@@ -52,7 +52,7 @@ const HomePage = () => {
                 <img
                   src={album.image}
                   alt={album.name}
-                  className="object-cover w-full h-48 rounded-md"
+                  className="object-cover w-full h-64 rounded-md"
                 />
                 <h3 className="mt-4 text-xl font-semibold text-blue-700">
                   {album.name}
@@ -65,7 +65,7 @@ const HomePage = () => {
           </div>
         </section>
         <section className="px-4 py-8 bg-white md:px-12">
-          <h2 className="mb-6 text-3xl font-bold text-blue-800 underline decoration-2 decoration-blue-600">
+          <h2 className="mb-6 text-3xl font-bold text-black">
             Our Artists
           </h2>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">

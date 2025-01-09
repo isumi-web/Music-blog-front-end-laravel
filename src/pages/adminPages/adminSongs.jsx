@@ -7,18 +7,20 @@ import "react-toastify/dist/ReactToastify.css";
 
 const AdminSongs = () => {
   const [songs, setSongs] = useState([]);
+  const [albums, setAlbums] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [editSongId, setEditSongId] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     url: "",
-    albumId: "",
+    albumName: "",
     image: "",
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
+  // Fetch songs
   const fetchSongs = async (page = 1) => {
     try {
       const response = await api.get(`/songs?page=${page}`);
@@ -30,8 +32,20 @@ const AdminSongs = () => {
     }
   };
 
+  // Fetch albums
+  const fetchAlbums = async () => {
+    try {
+      const response = await api.get("/albums"); // Update the endpoint if necessary
+      setAlbums(response.data.data || []);
+    } catch (error) {
+      console.error("Error fetching albums:", error);
+      setAlbums([]);
+    }
+  };
+
   useEffect(() => {
     fetchSongs(currentPage);
+    fetchAlbums();
   }, [currentPage]);
 
   const handleDelete = async (songId) => {
@@ -42,10 +56,7 @@ const AdminSongs = () => {
       fetchSongs(currentPage);
     } catch (error) {
       toast.error("Error deleting song");
-      console.error(
-        "Error deleting song:",
-        error.response?.data || error.message
-      );
+      console.error("Error deleting song:", error.response?.data || error.message);
     }
   };
 
@@ -56,13 +67,23 @@ const AdminSongs = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    toast.info(editSongId ? "Updating song..." : "Creating song...");
     try {
-      if (!formData.albumId) {
-        toast.error("Album ID is required");
+      if (!formData.albumName) {
+        toast.error("Album is required");
         return;
       }
 
+      // Get the album ID based on albumName
+      const album = albums.find((a) => a.name === formData.albumName);
+      if (!album) {
+        toast.error("Invalid album selected");
+        return;
+      }
+      formData.albumId = album.id; // Set the albumId based on the selected album name
+
       if (editSongId) {
+        // Update existing song
         const response = await api.put(`/songs/${editSongId}`, formData);
         const updatedSong = response.data.data;
 
@@ -72,23 +93,23 @@ const AdminSongs = () => {
               song.id === editSongId ? updatedSong : song
             )
           );
-          toast.success("Song updated successfully!");
         }
       } else {
+        // Create new song
         const response = await api.post("/songs", formData);
         const newSong = response.data.data;
 
         if (newSong) {
           setSongs((prevSongs) => [...prevSongs, newSong]);
-          toast.success("Song created successfully!");
         }
       }
 
+      // Reset form
       setFormData({
         name: "",
         description: "",
         url: "",
-        albumId: "",
+        albumName: "",
         image: "",
       });
       setShowForm(false);
@@ -101,11 +122,12 @@ const AdminSongs = () => {
   };
 
   const handleEdit = (song) => {
+    const album = albums.find((a) => a.id === song.albumId);
     setFormData({
       name: song.name,
       description: song.description,
       url: song.url,
-      albumId: song.albumId || "",
+      albumName: album ? album.name : "", // Set albumName to the album name
       image: song.image,
     });
     setEditSongId(song.id);
@@ -132,11 +154,11 @@ const AdminSongs = () => {
                 name: "",
                 description: "",
                 url: "",
-                albumId: "",
+                albumName: "",
                 image: "",
               });
             }}
-            className="px-4 py-2 mb-4 text-white bg-blue-500 rounded"
+            className="px-4 py-2 mb-4 text-white bg-blue-900 rounded"
           >
             {showForm ? "Cancel" : "Add Song"}
           </button>
@@ -144,17 +166,51 @@ const AdminSongs = () => {
           {showForm && (
             <form onSubmit={handleSubmit} className="mb-6">
               <div className="grid grid-cols-2 gap-4">
-                {Object.keys(formData).map((field) => (
-                  <input
-                    key={field}
-                    type="text"
-                    name={field}
-                    placeholder={`Enter ${field}`}
-                    value={formData[field]}
-                    onChange={handleInputChange}
-                    className="p-2 border rounded"
-                  />
-                ))}
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Enter song name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  className="p-2 border rounded"
+                />
+                <input
+                  type="text"
+                  name="description"
+                  placeholder="Enter song description"
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  className="p-2 border rounded"
+                />
+                <input
+                  type="text"
+                  name="url"
+                  placeholder="Enter song URL"
+                  value={formData.url}
+                  onChange={handleInputChange}
+                  className="p-2 border rounded"
+                />
+                <select
+                  name="albumName"
+                  value={formData.albumName}
+                  onChange={handleInputChange}
+                  className="p-2 border rounded"
+                >
+                  <option value="">Select Album</option>
+                  {albums.map((album) => (
+                    <option key={album.id} value={album.name}>
+                      {album.name}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="text"
+                  name="image"
+                  placeholder="Enter song image URL"
+                  value={formData.image}
+                  onChange={handleInputChange}
+                  className="p-2 border rounded"
+                />
               </div>
               <button
                 type="submit"
@@ -172,7 +228,7 @@ const AdminSongs = () => {
                 <th className="px-4 py-2 border">Name</th>
                 <th className="px-4 py-2 border">Description</th>
                 <th className="px-4 py-2 border">URL</th>
-                <th className="px-4 py-2 border">Album ID</th>
+                <th className="px-4 py-2 border">Album</th>
                 <th className="px-4 py-2 border">Image</th>
                 <th className="px-4 py-2 border">Action</th>
               </tr>
@@ -186,7 +242,12 @@ const AdminSongs = () => {
                       <td className="px-4 py-2 border">{song.name}</td>
                       <td className="px-4 py-2 border">{song.description}</td>
                       <td className="px-4 py-2 border">{song.url}</td>
-                      <td className="px-4 py-2 border">{song.albumId}</td>
+                      <td className="px-4 py-2 border">
+                        {
+                          albums.find((album) => album.id === song.albumId)
+                            ?.name
+                        }
+                      </td>
                       <td className="px-4 py-2 border">
                         <img
                           src={song.image}
@@ -213,28 +274,29 @@ const AdminSongs = () => {
                 )
               ) : (
                 <tr>
-                  <td colSpan="7" className="px-4 py-2 text-center border">
-                    No songs found
+                  <td colSpan="7" className="px-4 py-2 text-center">
+                    No songs available
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
+
           <div className="flex justify-between mt-4">
             <button
               onClick={() => handlePageChange(-1)}
               disabled={currentPage === 1}
-              className="px-4 py-2 text-white bg-blue-500 rounded"
+              className="px-4 py-2 text-white bg-blue-900 rounded"
             >
               Previous
             </button>
-            <span className="px-4 py-2">
+            <span>
               Page {currentPage} of {totalPages}
             </span>
             <button
               onClick={() => handlePageChange(1)}
               disabled={currentPage === totalPages}
-              className="px-4 py-2 text-white bg-blue-500 rounded"
+              className="px-4 py-2 text-white bg-blue-900 rounded"
             >
               Next
             </button>

@@ -8,10 +8,9 @@ import AdminHome from './pages/adminPages/adminHome';
 import AdminUsers from './pages/adminPages/adminUsers';
 import AdminAlbums from './pages/adminPages/adminAlbums';
 import AdminSongs from './pages/adminPages/adminSongs';
-
+import PrivateRoute from './components/PrivateRoute'; // Import the PrivateRoute component
 
 function App() {
-
   return (
     <>
       <Router>
@@ -21,16 +20,13 @@ function App() {
           <Route path='/register' element={<RegisterPage />} />
           <Route path='/songs' element={<MusicPage />} />
           <Route path='/albums' element={<AlbumsPage />} />
-          <Route path='/dashboard' element={<AdminHome />} />
-          <Route path='/admin/users' element={<AdminUsers />} />
-          <Route path='/admin/albums' element={<AdminAlbums />} />
-          <Route path='/admin/songs' element={<AdminSongs />} />
-
+          <Route path='/dashboard' element={<PrivateRoute element={AdminHome} />} />
+          <Route path='/admin/users' element={<PrivateRoute element={AdminUsers} />} />
+          <Route path='/admin/albums' element={<PrivateRoute element={AdminAlbums} />} />
+          <Route path='/admin/songs' element={<PrivateRoute element={AdminSongs} />} />
         </Routes>
       </Router>
     </>
-
-    
   );
 }
 
